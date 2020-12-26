@@ -1,0 +1,81 @@
+create table PUBLISHER(name varchar(10) primary key , address varchar(30),phno varchar(10));
+create table BOOK (Book_id integer primary key,title varchar(10),Publisher_name varchar(10),Pub_year integer,foreign key(Publisher_name) references PUBLISHER(name)on delete cascade);
+create table BOOK_AUTHORS(Book_id integer, Author_name varchar(10),primary key(Book_id),foreign key(Book_id)references BOOK(Book_id)on delete cascade);                        
+create table LIBRARY_PROGRAMME(Programme_id integer,branch_name varchar(20),address varchar(30),primary key(Programme_id));
+create table BOOK_COPIES(book_id integer,Programme_id integer,no_of_copies integer,primary key(book_id,Programme_id),foreign key (book_id)references BOOK(Book_id)on delete cascade,foreign key (Programme_id)references LIBRARY_PROGRAMME(Programme_id)on delete cascade);
+create table BOOK_LENDING(book_id integer ,Programme_id integer,card_no integer,date_out date,due_date date ,primary key(book_id,Programme_id,card_no),foreign key (book_id)references BOOK(Book_id)on delete cascade,foreign key(Programme_id)references LIBRARY_PROGRAMME(Programme_id)on delete cascade);
+insert into PUBLISHER values('Mcgraw','Bangalore','9696500001');
+insert into PUBLISHER values('Person','Bangalore','9595950000');
+insert into PUBLISHER values('SAM Pub','Mangalore','9494940000');
+insert into PUBLISHER values('IOP','Mumbai','9797970000');
+insert into PUBLISHER values('IEEE','Delhi','9090900000');
+insert into BOOK values(10,'DBMS','Mcgraw',2010);
+insert into BOOK values(20,'SE','Person',2008);
+insert into BOOK values(30,'FLAT','SAM Pub',2019);
+insert into BOOK values(40,'BDA','IOP',2018);
+insert into BOOK values(50,'MP','IEEE',2020);
+insert into BOOK_AUTHORS values(10,'Andrew');
+insert into BOOK_AUTHORS values(20,'Raj Kumar');
+insert into BOOK_AUTHORS values(30,'Samual');
+insert into BOOK_AUTHORS values(40,'Padma');
+insert into BOOK_AUTHORS values(50,'Guru');
+insert into LIBRARY_PROGRAMME values(100,'Main Building','Mangalore');
+insert into LIBRARY_PROGRAMME  values(200,'Ground Floor','Bangalore');
+insert into LIBRARY_PROGRAMME  values(300,'1st Floor','Bangalore');
+insert into LIBRARY_PROGRAMME  values(400,'Research Building','Udupi');
+insert into LIBRARY_PROGRAMME  values(500,'OPD Building','Manipal');
+insert into BOOK_COPIES values(10,100,20);
+insert into BOOK_COPIES values(30,100,30);
+insert into BOOK_COPIES values(10,200,5);
+insert into BOOK_COPIES values(20,300,15);
+insert into BOOK_COPIES values(40,500,7);
+insert into BOOK_LENDING values(10,100,201,'2017-06-15','2020-06-25');
+insert into BOOK_LENDING values(20,200,202,'2017-05-10','2017-05-20');
+insert into BOOK_LENDING values(30,300,203,'2017-07-25','2020-07-30');
+insert into BOOK_LENDING values(40,400,204,'2017-08-14','2020-08-26');
+insert into BOOK_LENDING values(50,500,205,'2017-09-01','2020-09-10');            
+insert into BOOK_LENDING values(10,100,202,'2017-05-11','2017-05-21');
+insert into BOOK_LENDING values(30,300,202,'2017-05-13','2017-05-22');
+insert into BOOK_LENDING values(50,500,202,'2017-04-10','2017-04-20');                                                                                                            
+    
+
+---
+
+**Query #1**
+
+    create  view v1 as select book_id ,sum(no_of_copies) from BOOK_COPIES group by book_id;
+
+There are no results to be displayed.
+
+---
+**Query #2**
+
+    select * from v1;
+
+| book_id | sum(no_of_copies) |
+| ------- | ----------------- |
+| 10      | 25                |
+| 20      | 15                |
+| 30      | 30                |
+| 40      | 7                 |
+
+---
+**Query #3**
+
+    create view v2 as select BOOK.Book_id,title,sum(no_of_copies) from BOOK ,BOOK_COPIES where BOOK.Book_id=BOOK_COPIES.book_id group by BOOK.Book_id,title;
+
+There are no results to be displayed.
+
+---
+**Query #4**
+
+    select * from v2;
+
+| Book_id | title | sum(no_of_copies) |
+| ------- | ----- | ----------------- |
+| 10      | DBMS  | 25                |
+| 20      | SE    | 15                |
+| 30      | FLAT  | 30                |
+| 40      | BDA   | 7                 |
+
+---
